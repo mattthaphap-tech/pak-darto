@@ -1,0 +1,47 @@
+{
+  "name": "pak-darto",
+  "version": "1.0.0",
+  "description": "Pak Darto - 2D-in-3D animated short (Remotion + Three.js), 1080x1920 @30fps, 146.5 s",
+  "main": "src/index.ts",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render:stills": "node scripts/render-stills.mjs",
+    "render:previews": "node scripts/render-previews.mjs",
+    "render:audio": "python scripts/gen-audio.py",
+    "render:video": "node scripts/render-video.mjs",
+    "render:captions": "node scripts/render-captions.mjs",
+    "build": "remotion bundle src/index.ts",
+    "chunks:darto": "python3 scripts/gen-chunks-darto.py",
+    "audio:darto": "python3 scripts/gen-audio-darto.py",
+    "stills:darto": "node scripts/render-darto-stills.mjs",
+    "render:darto": "node scripts/render-darto.mjs"
+  },
+  "keywords": [
+    "remotion",
+    "threejs",
+    "2d-in-3d",
+    "animation",
+    "comic",
+    "procedural-generation",
+    "react-three-fiber",
+    "short-form-video"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@react-three/fiber": "^9.8.2",
+    "@react-three/postprocessing": "^3.2.2",
+    "@remotion/bundler": "^4.0.540",
+    "@remotion/cli": "^4.0.540",
+    "@remotion/renderer": "^4.0.540",
+    "@remotion/three": "^4.0.540",
+    "@types/react": "^19.3.0",
+    "@types/three": "^0.187.0",
+    "postprocessing": "^6.39.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.540",
+    "three": "^0.187.0",
+    "typescript": "^7.0.2"
+  }
+}

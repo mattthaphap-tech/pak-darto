@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Remotion & Media Render Outputs
+out/
+build/
+dist/
+.remotion/
+*.tmp
+D:/remotion-tmp/
+C:/remotion-tmp/
+
+# Rendered media & large wav files (keep repository lightweight < 30 MB)
+# NOTE: public/darto_mix.wav is stored as base64 parts in audio-parts/
+# (the GitHub connector cannot push binary files). The render workflow
+# reassembles it with: cat audio-parts/*.part* | base64 -d > public/darto_mix.wav
+public/_*
+out/**/*.mp4
+out/**/*.webm
+out/**/*.jpg
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+
+# Logs & OS artifacts
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Editor folders
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
