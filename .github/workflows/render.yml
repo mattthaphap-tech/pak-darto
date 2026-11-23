@@ -1,0 +1,90 @@
+name: Render Pak Darto (chunked)
+
+# Triggered by the push that adds this file (once the code + audio parts are
+# already in the repo), or manually via workflow_dispatch.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  render-chunk:
+    name: chunk ${{ matrix.start }}-${{ matrix.end }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { start: 0, end: 549 }
+          - { start: 550, end: 1099 }
+          - { start: 1100, end: 1649 }
+          - { start: 1650, end: 2199 }
+          - { start: 2200, end: 2749 }
+          - { start: 2750, end: 3299 }
+          - { start: 3300, end: 3849 }
+          - { start: 3850, end: 4395 }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Reassemble audio mix
+        run: |
+          cat audio-parts/darto_mix.wav.b64.part* | base64 -d > public/darto_mix.wav
+          ls -la public/darto_mix.wav
+
+      - name: Render chunk
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: node scripts/render-chunk.mjs ${{ matrix.start }} ${{ matrix.end }}
+
+      - name: Upload chunk
+        uses: actions/upload-artifact@v4
+        with:
+          name: chunk-${{ matrix.start }}-${{ matrix.end }}
+          path: out/darto/chunks/chunk-${{ matrix.start }}-${{ matrix.end }}.mp4
+          retention-days: 7
+
+  concat:
+    name: concat + mux audio
+    needs: render-chunk
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download chunks
+        uses: actions/download-artifact@v4
+        with:
+          pattern: chunk-*
+          path: chunks
+          merge-multiple: true
+
+      - name: Reassemble audio mix
+        run: |
+          cat audio-parts/darto_mix.wav.b64.part* | base64 -d > public/darto_mix.wav
+          ls -la public/darto_mix.wav
+
+      - name: Concat video + mux audio
+        run: |
+          mkdir -p out/darto
+          ls chunks/
+          : > concat.txt
+          for f in $(ls chunks/chunk-*.mp4 | sort -t- -k2 -n); do echo "file '$PWD/$f'" >> concat.txt; done
+          cat concat.txt
+          ffmpeg -f concat -safe 0 -i concat.txt -c copy video-only.mp4
+          ffmpeg -i video-only.mp4 -i public/darto_mix.wav -c:v copy -c:a aac -b:a 192k -shortest out/darto/Darto_Final.mp4
+          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 out/darto/Darto_Final.mp4
+
+      - name: Upload final video
+        uses: actions/upload-artifact@v4
+        with:
+          name: Darto_Final
+          path: out/darto/Darto_Final.mp4
+          retention-days: 30
