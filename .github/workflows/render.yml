@@ -36,6 +36,7 @@ jobs:
 
       - name: Reassemble audio mix
         run: |
+          mkdir -p public
           cat audio-parts/darto_mix.wav.b64.part* | base64 -d > public/darto_mix.wav
           ls -la public/darto_mix.wav
 
@@ -68,6 +69,7 @@ jobs:
 
       - name: Reassemble audio mix
         run: |
+         mkdir -p public
           cat audio-parts/darto_mix.wav.b64.part* | base64 -d > public/darto_mix.wav
           ls -la public/darto_mix.wav
 
